@@ -32,8 +32,6 @@ rp_new_member_name = (
 其他用户的PUID 可以通过 bot.friends().search("昵称")[0].puid 获取
 '''
 admin_puids = (
-    'ebe84c2b',
-    'cd9189b7'
 )
 
 '''
@@ -41,7 +39,6 @@ admin_puids = (
 PUID 可以通过 bot.groups().search("群名")[0].puid 获取 获取
 '''
 group_puids = (
-     'cf7248f2',
  )
 
 # 格式化 Group
@@ -54,8 +51,7 @@ welcome_text = '''🎉 欢迎 @{} 加入UICcst的大家庭！
 😃 有问题欢迎在群内提问喔~
 '''
 
-invite_text = """你好！，我是由 UIC-PANICS
-开发的 UICcst 小助手：
+invite_text = """你好！，我是由 UIC-PANICS 开发的 UICcst 小助手：
 请输入关键词 CST2017 来加入 UICcst 2017 年新生群。
 请言行遵守群内规定，违规者将受到处罚，拉入黑名单。"""
 
@@ -178,8 +174,6 @@ def welcome(msg):
     name = get_new_member_name(msg)
     if name:
         return welcome_text.format(name)
-
-
 
 
 embed()
