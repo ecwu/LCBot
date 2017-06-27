@@ -16,6 +16,10 @@ bot = Bot('bot.pkl', console_qr=True)
 '''
 bot.enable_puid('wxpy_puid.pkl')
 
+'''
+连接图灵机器人
+'''
+
 
 '''
 邀请信息处理
@@ -32,6 +36,8 @@ rp_new_member_name = (
 其他用户的PUID 可以通过 bot.friends().search("昵称")[0].puid 获取
 '''
 admin_puids = (
+	'7c099b9a',
+	'ea5a73fa',
 )
 
 '''
@@ -39,7 +45,8 @@ admin_puids = (
 PUID 可以通过 bot.groups().search("群名")[0].puid 获取 获取
 '''
 group_puids = (
- )
+	'f889d116',
+)
 
 # 格式化 Group
 groups = list(map(lambda x: bot.groups().search(puid=x)[0], group_puids))
@@ -47,27 +54,52 @@ groups = list(map(lambda x: bot.groups().search(puid=x)[0], group_puids))
 admins = list(map(lambda x: bot.friends().search(puid=x)[0], admin_puids))
 
 # 新人入群的欢迎语
-welcome_text = '''🎉 欢迎 @{} 加入UICcst的大家庭！
-😃 有问题欢迎在群内提问喔~
+welcome_text = '''🎉 欢迎 @{} 加入UIC计算机类2017咨询群！😃 有问题欢迎在群内提问喔~
 '''
 
-invite_text = """你好！，我是由 UIC-PANICS 开发的 UICcst 小助手：
-请输入关键词 CST2017 来加入 UICcst 2017 年新生群。
-请言行遵守群内规定，违规者将受到处罚，拉入黑名单。"""
+invite_text = """我是由 UIC-PANICS 开发的 UICcst 小助手：
+请输入关键词
+CST2017
+来加入 UICcst 2017 年咨询群。
+请言行遵守群内规定，违规者将拉入黑名单。"""
 
 '''
 设置群组关键词和对应群名
 * 关键词必须为小写，查询时会做相应的小写处理
 '''
 keyword_of_group = {
-    "cst2017":"UICcst 2017",
+    "cst2017":"UIC计算机类2017咨询群",
 }
+
+
+kw_replies = {
+    'The server is working properly': (
+        'servers status'
+    )
+}
+
 
 # 远程踢人命令: 移出 @<需要被移出的人>
 rp_kick = re.compile(r'^移出\s*@(.+?)(?:\u2005?\s*$)')
 
 
 # 下方为函数定义
+
+tuling = Tuling(api_key='199d4616ab0f4ea1b0cc84ca30b41a25')
+
+@bot.register(groups)
+def group2reply(msg):
+    replyedtext = tuling.do_reply(msg)
+    print('Q:' + str(msg) + '\nA:' + replyedtext)
+
+
+def reply_by_keyword(msg):
+    for reply, keywords in kw_replies.items():
+        for kw in keywords:
+            if kw in msg.text.lower():
+                msg.reply(reply)
+                return reply
+
 
 '''
 判断消息发送者是否在管理员列表
@@ -94,7 +126,7 @@ def remote_kick(msg):
             name_to_kick = match.group(1)
 
             if not from_admin(msg):
-                return '感觉有点不对劲… @{}'.format(msg.member.name)
+                return '放弃吧，没用的'.format(msg.member.name)
 
             member_to_kick = ensure_one(list(filter(
                 lambda x: x.name == name_to_kick, msg.chat)))
@@ -166,7 +198,8 @@ def wxpy_group(msg):
     if ret_msg:
         return ret_msg
     elif msg.is_at:
-        pass
+    	if from_admin(msg):
+    		reply_by_keyword(msg)
 
 
 @bot.register(groups, NOTE)
@@ -174,6 +207,9 @@ def welcome(msg):
     name = get_new_member_name(msg)
     if name:
         return welcome_text.format(name)
+
+
+
 
 
 embed()
